@@ -1,0 +1,15 @@
+server:
+  port: 8080
+
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/jdbc?serverTimezone=Asia/Seoul&zeroDateTimeBehavior=convertToNull&characterEncoding=utf8
+    username: npee
+    password: manager
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
