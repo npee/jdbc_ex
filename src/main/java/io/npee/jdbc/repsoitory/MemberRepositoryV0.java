@@ -5,6 +5,7 @@ import io.npee.jdbc.domain.Member;
 import lombok.extern.slf4j.Slf4j;
 
 import java.sql.*;
+import java.util.NoSuchElementException;
 
 @Slf4j
 public class MemberRepositoryV0 {
@@ -24,12 +25,43 @@ public class MemberRepositoryV0 {
             return member;
         } catch (SQLException e) {
             // e.printStackTrace();
-            log.info("db error", e);
+            log.error("db error", e);
             throw e;
         } finally {
             close(conn, pstmt, null);
         }
     }
+
+    public Member findById(String memberId) throws SQLException {
+
+        String sql = "select * from member where member_id = ?";
+
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+
+        try {
+            conn = getConnection();
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, memberId);
+
+            rs = pstmt.executeQuery();
+            if (rs.next()) {
+                Member member = new Member();
+                member.setMemberId(rs.getString("member_id"));
+                member.setMoney(rs.getInt("money"));
+                return member;
+            } else {
+                throw new NoSuchElementException("member not found memberId=" + memberId);
+            }
+        } catch (SQLException e) {
+            log.error("db error", e);
+            throw e;
+        } finally {
+            close(conn, pstmt, rs);
+        }
+    }
+
 
     // JDBC 를 직접 사용하게 되면 리소스를 정리하는 순서에 신경을 써야 한다.
     private void close(Connection conn, Statement stmt, ResultSet rs) {
