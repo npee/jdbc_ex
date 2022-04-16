@@ -17,11 +17,17 @@ class MemberRepositoryV0Test {
     @Test
     void crud() throws SQLException {
 
-        Member member = new Member("memberV1", 10000);
+        Member member = new Member("memberV3", 10000);
         memberRepositoryV0.save(member);
 
         Member findMember = memberRepositoryV0.findById(member.getMemberId());
         log.info("findMember {}", findMember);
         Assertions.assertThat(findMember).isEqualTo(member);
+
+        memberRepositoryV0.update("memberV3", 15000);
+        Member updatedMember = memberRepositoryV0.findById(member.getMemberId());
+        log.info("updatedMember {}", updatedMember);
+        Assertions.assertThat(updatedMember.getMoney()).isEqualTo(15000);
+
     }
 }
