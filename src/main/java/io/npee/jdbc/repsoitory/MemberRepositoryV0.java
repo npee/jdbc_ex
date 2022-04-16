@@ -84,6 +84,26 @@ public class MemberRepositoryV0 {
         }
     }
 
+    public void delete(String memberId) throws SQLException {
+        String sql = "delete from member where member_id = ?";
+
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+
+        try {
+            conn = getConnection();
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, memberId);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            // e.printStackTrace();
+            log.error("db error", e);
+            throw e;
+        } finally {
+            close(conn, pstmt, null);
+        }
+    }
+
     // JDBC 를 직접 사용하게 되면 리소스를 정리하는 순서에 신경을 써야 한다.
     private void close(Connection conn, Statement stmt, ResultSet rs) {
 
