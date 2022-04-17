@@ -9,6 +9,10 @@ import javax.sql.DataSource;
 import java.sql.*;
 import java.util.NoSuchElementException;
 
+/**
+ * V0 - DriverManager
+ * V1 - DataSource, JdbcUtils
+ */
 @Slf4j
 public class MemberRepositoryV1 {
 
