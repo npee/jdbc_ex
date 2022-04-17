@@ -1,5 +1,6 @@
 package io.npee.jdbc.repsoitory;
 
+import com.zaxxer.hikari.HikariDataSource;
 import io.npee.jdbc.connection.ConnectionConst;
 import io.npee.jdbc.domain.Member;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +22,12 @@ class MemberRepositoryV1Test {
 
     @BeforeEach
     void beforeEach() {
-        DriverManagerDataSource dataSource = new DriverManagerDataSource(URL, USERNAME, PASSWORD);
+        // DriverManagerDataSource dataSource = new DriverManagerDataSource(URL, USERNAME, PASSWORD);
+        HikariDataSource dataSource = new HikariDataSource();
+        dataSource.setJdbcUrl(URL);
+        dataSource.setUsername(USERNAME);
+        dataSource.setPassword(PASSWORD);
+        dataSource.setPoolName("MyPool");
         memberRepositoryV1 = new MemberRepositoryV1(dataSource);
     }
 
