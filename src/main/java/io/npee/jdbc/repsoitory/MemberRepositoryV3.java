@@ -16,7 +16,7 @@ import java.util.NoSuchElementException;
  * V3 - TransactionManger, DataSourceUtils
  */
 @Slf4j
-public class MemberRepositoryV3 {
+public class MemberRepositoryV3 implements MemberRepositoryEx {
 
     private final DataSource dataSource;
 
