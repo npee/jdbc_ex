@@ -4,7 +4,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.BadSqlGrammarException;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator;
 
 import javax.sql.DataSource;
 
@@ -26,7 +29,7 @@ public class SpringExceptionTranslatorTest {
 
     @Test
     void sqlExceptionErrorCode() {
-        String sql = "select bad grammer";
+        String sql = "select bad grammar";
 
         try {
             Connection conn = dataSource.getConnection();
@@ -37,6 +40,25 @@ public class SpringExceptionTranslatorTest {
             int errorCode = e.getErrorCode();
             log.info("errorCode {}", errorCode);
             log.info("e", e);
+        }
+    }
+
+    @Test
+    void exceptionTranslator() {
+        String sql = "select bad grammar";
+
+        try {
+            Connection conn = dataSource.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.executeQuery();
+        } catch (SQLException e) {
+            Assertions.assertThat(e.getErrorCode()).isEqualTo(1054);
+            SQLErrorCodeSQLExceptionTranslator exTranslator = new SQLErrorCodeSQLExceptionTranslator(dataSource);
+
+            // DataAccessException -> BadSqlGrammarException (sql-error-codes.xml)
+            DataAccessException resultEx = exTranslator.translate("select", sql, e);
+            log.info("resultEx", resultEx);
+            Assertions.assertThat(resultEx.getClass()).isEqualTo(BadSqlGrammarException.class);
         }
     }
 }
